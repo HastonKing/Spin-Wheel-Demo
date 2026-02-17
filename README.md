@@ -1,8 +1,11 @@
 Whimsical Carnival Spin Wheel
 
+A front end interactive demo built to demonstrate motion logic, SVG rendering, and Canvas-based particle physics without external libraries.
+
 Interactive SVG and Canvas Demonstration
 
-Live Demo:
+##Live Demo:
+
 https://hastonking.github.io/Spin-Wheel-Demo/
 
 Project Overview

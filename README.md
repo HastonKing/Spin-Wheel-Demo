@@ -1,104 +1,77 @@
-Whimsical Carnival Spin Wheel
+# Whimsical Carnival Spin Wheel
 
-A front end interactive demo built to demonstrate motion logic, SVG rendering, and Canvas-based particle physics without external libraries.
+---
 
-Interactive SVG and Canvas Demonstration
+## Overview
 
-##Live Demo:
+This is a full-scale interactive front-end demonstration built to showcase deterministic motion logic, SVG rendering, and Canvas-based particle simulation without external libraries.
+
+The experience simulates a carnival-style spin wheel that always resolves positively by design. While playful in concept, the implementation focuses on precision animation control, mathematical rendering, and synchronized UI state management.
+
+---
+
+## Live Demo
 
 https://hastonking.github.io/Spin-Wheel-Demo/
 
-Project Overview
+---
 
-This project is an interactive front-end demonstration built to showcase motion logic, SVG rendering, state management, and Canvas-based particle simulation without external libraries.
+## Concept
 
-The concept is simple: a carnival spin wheel that always lands on a variation of “Yes.”
-The execution focuses on deterministic animation control, responsive layout behavior, and clean interactive structure.
+The wheel animates toward a calculated final rotation rather than a purely random stop.
 
-Key Capabilities Demonstrated
+Key principles behind the interaction:
 
-Deterministic Spin Logic
+- Deterministic spin targeting  
+- Accurate wedge index calculation  
+- Guaranteed alignment between landing position and displayed result  
+- Structured animation sequencing  
+- Clean reset state handling  
 
-Controlled rotation targeting
+The visual result is always programmatically synchronized with the exact wedge selected.
 
-Accurate wedge selection calculation
+---
 
-Guaranteed alignment between visual landing position and displayed result
+## Technical Highlights
 
-SVG-Based Rendering
+### Motion & State Control
 
-Dynamic wedge generation using polar-to-Cartesian trigonometry
+- Deterministic spin logic (no uncontrolled drift)  
+- Explicit rotation targeting  
+- Controlled easing curves  
+- Animation lifecycle management  
+- Spin/reset isolation  
 
-Multi-line text fitting inside non-rectangular geometry
+### SVG Rendering
 
-Adaptive font sizing to prevent clipping
+- Dynamic wedge generation using polar-to-Cartesian math  
+- Accurate arc path construction  
+- Multi-line text fitting within angled segments  
+- Adaptive font scaling to prevent clipping  
+- Label rotation alignment  
 
-Organic label positioning within angled segments
+### Canvas Particle System
 
-Canvas Particle Simulation
+- Confetti simulation via `requestAnimationFrame`  
+- Gravity and friction modeling  
+- Surface collision detection  
+- Persistent particle accumulation until reset  
 
-Physics-driven confetti system using requestAnimationFrame
+### UI & Responsiveness
 
-Gravity and friction modeling
+- Result synchronization with final wedge  
+- Responsive layout scaling  
+- Desktop and mobile optimization  
+- Layout containment and alignment safeguards  
 
-Surface collision detection (floor and card surface)
+### Architecture
 
-Persistent particle accumulation across spins
+- Vanilla HTML / CSS / JavaScript  
+- No heavy frameworks  
+- Separation of rendering, animation, and state logic  
+- Readable, structured implementation  
 
-Reset and threshold management
+---
 
-Responsive Design
+## Folder Structure
 
-Adaptive layout for desktop and mobile
-
-Scalable wheel rendering
-
-Button stacking and touch-friendly controls
-
-Background behavior optimized for mobile browsers
-
-Technical Stack
-
-HTML5
-
-CSS3
-
-SVG
-
-Vanilla JavaScript
-
-Canvas API
-
-No frameworks or animation libraries were used.
-
-Engineering Considerations
-
-This build emphasizes:
-
-Separation of rendering logic and interaction state
-
-Deterministic animation outcomes
-
-Responsive behavior across viewport sizes
-
-Performance-conscious particle limits
-
-Clean commit structure and deployable production setup
-
-Potential Extensions
-
-GSAP timeline-driven animation variant
-
-Fully Canvas-rendered wheel for advanced motion control
-
-Banner ad–sized implementation (300x250 unit)
-
-Motion blur and lighting enhancements
-
-Modularized architecture
-
-Author
-
-Haston King
-Prime Sign Solutions
-https://hastonking.github.io/Spin-Wheel-Demo/

@@ -20,14 +20,28 @@
     }
 
     html,body{ height:100%; margin:0; }
+
+    /* Preview stage: scales the 300x250 up to fit your browser window */
     body{
       display:grid;
       place-items:center;
-      background:#111;
+      background:#0f0f12;
       font-family:var(--ui);
     }
 
-    /* The actual banner stage */
+    .previewStage{
+      width: min(92vw, 900px);
+      height: min(92vh, 700px);
+      display:grid;
+      place-items:center;
+    }
+
+    .previewScale{
+      transform-origin: center;
+      will-change: transform;
+    }
+
+    /* Actual banner */
     .ad{
       width:var(--w);
       height:var(--h);
@@ -40,18 +54,29 @@
       user-select:none;
     }
 
-    /* Background photo + blur */
+    /* Background photo + blur (with graceful fallback) */
     .bg{
       position:absolute;
       inset:-18px;
-      background-image:url("Assets/carnival-background.png");
-      background-size:cover;
-      background-position:center;
+
+      /* Fallback gradient first */
+      background:
+        radial-gradient(520px 320px at 50% 30%, rgba(246,195,90,0.12) 0%, rgba(0,0,0,0) 55%),
+        radial-gradient(520px 320px at 50% 70%, rgba(123,75,215,0.10) 0%, rgba(0,0,0,0) 60%),
+        linear-gradient(135deg, #1a0f2d 0%, #0f081a 55%, #07040d 100%);
+
+      /* Then image layer on top (if it loads) */
+      background-image:
+        url("Assets/carnival-background.png"),
+        radial-gradient(520px 320px at 50% 30%, rgba(246,195,90,0.12) 0%, rgba(0,0,0,0) 55%);
+
+      background-size: cover, auto;
+      background-position: center, center;
+
       filter: blur(5px) saturate(1.05) brightness(0.92);
       transform: scale(1.05);
     }
 
-    /* Vignette overlay */
     .vignette{
       position:absolute;
       inset:0;
@@ -61,7 +86,6 @@
       pointer-events:none;
     }
 
-    /* Frame */
     .frame{
       position:absolute;
       inset:10px;
@@ -69,7 +93,6 @@
       pointer-events:none;
     }
 
-    /* Header */
     .title{
       position:absolute;
       top:10px;
@@ -94,7 +117,6 @@
       font-size:11px;
     }
 
-    /* Wheel area */
     .wheelWrap{
       position:absolute;
       left: 18px;
@@ -178,7 +200,6 @@
       z-index:3;
     }
 
-    /* Right panel */
     .panel{
       position:absolute;
       right:12px;
@@ -189,6 +210,7 @@
       background: rgba(0,0,0,0.28);
       padding:10px;
       box-sizing:border-box;
+      color: var(--cream);
     }
 
     .panelLabel{
@@ -237,18 +259,6 @@
       opacity:0.85;
     }
 
-    .btnHint{
-      position:absolute;
-      bottom:50px;
-      left:12px;
-      right:12px;
-      text-align:center;
-      font-size:10.5px;
-      opacity:0.78;
-      pointer-events:none;
-    }
-
-    /* Confetti canvas sits on top */
     #confettiCanvas{
       position:absolute;
       inset:0;
@@ -258,7 +268,6 @@
       z-index:10;
     }
 
-    /* Accessibility focus */
     .ad:focus{
       outline: 2px solid rgba(246,195,90,0.85);
       outline-offset: 2px;
@@ -271,53 +280,50 @@
 </head>
 
 <body>
-  <div class="ad" id="ad" tabindex="0" role="button" aria-label="Interactive carnival wheel banner. Click to spin.">
-    <div class="bg" aria-hidden="true"></div>
-    <div class="vignette" aria-hidden="true"></div>
-    <div class="frame" aria-hidden="true"></div>
+  <div class="previewStage">
+    <div class="previewScale" id="previewScale">
+      <div class="ad" id="ad" tabindex="0" role="button" aria-label="Interactive carnival wheel banner. Click to spin.">
+        <div class="bg" aria-hidden="true"></div>
+        <div class="vignette" aria-hidden="true"></div>
+        <div class="frame" aria-hidden="true"></div>
 
-    <div class="title">
-      Carnival Wheel
-      <div class="subtitle">Spin it. Every outcome is a yes.</div>
-    </div>
+        <div class="title">
+          Carnival Wheel
+          <div class="subtitle">Spin it. Every outcome is a yes.</div>
+        </div>
 
-    <div class="wheelWrap">
-      <div class="spot" aria-hidden="true"></div>
-      <div class="pointer" aria-hidden="true"></div>
-      <div class="pointerCap" aria-hidden="true"></div>
-      <div class="ring" aria-hidden="true"></div>
+        <div class="wheelWrap">
+          <div class="spot" aria-hidden="true"></div>
+          <div class="pointer" aria-hidden="true"></div>
+          <div class="pointerCap" aria-hidden="true"></div>
+          <div class="ring" aria-hidden="true"></div>
 
-      <div class="wheel" id="wheel">
-        <svg id="wheelSvg" viewBox="-200 -200 400 400" width="100%" height="100%" role="img" aria-label="Wheel">
-        </svg>
+          <div class="wheel" id="wheel">
+            <svg id="wheelSvg" viewBox="-200 -200 400 400" width="100%" height="100%" role="img" aria-label="Wheel"></svg>
+          </div>
+
+          <div class="hub" aria-hidden="true">Spin<br>Me</div>
+        </div>
+
+        <div class="panel" aria-label="Result panel">
+          <p class="panelLabel">Result</p>
+          <p class="panelResult" id="result">Tap Spin.</p>
+        </div>
+
+        <div class="cta" aria-hidden="true">
+          <div class="btn" id="spinBtn">Spin</div>
+          <div class="btn secondary" id="resetBtn">Reset</div>
+        </div>
+
+        <canvas id="confettiCanvas"></canvas>
       </div>
-
-      <div class="hub" aria-hidden="true">Spin<br>Me</div>
     </div>
-
-    <div class="panel" aria-label="Result panel">
-      <p class="panelLabel">Result</p>
-      <p class="panelResult" id="result">Tap Spin.</p>
-    </div>
-
-    <div class="btnHint" aria-hidden="true">Built as an HTML5 banner style unit</div>
-
-    <div class="cta" aria-hidden="true">
-      <div class="btn" id="spinBtn">Spin</div>
-      <div class="btn secondary" id="resetBtn">Reset</div>
-    </div>
-
-    <canvas id="confettiCanvas"></canvas>
   </div>
 
-  <!-- GSAP (CDN) for timeline control -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
   <script>
-    // -----------------------
-    // Banner-friendly config
-    // -----------------------
-    const clickTag = "https://hastonking.github.io/Spin-Wheel-Demo/"; // replace with advertiser URL if needed
+    const clickTag = "https://hastonking.github.io/Spin-Wheel-Demo/";
 
     const slices = [
       "Yes, easily",
@@ -346,19 +352,22 @@
     const resultEl = document.getElementById("result");
     const spinBtn = document.getElementById("spinBtn");
     const resetBtn = document.getElementById("resetBtn");
-
-    // Confetti
     const confettiCanvas = document.getElementById("confettiCanvas");
     const cctx = confettiCanvas.getContext("2d", { alpha:true });
+    const previewScaleEl = document.getElementById("previewScale");
 
     let spinning = false;
     let currentRotation = 0;
     let particles = [];
     let raf = null;
 
-    // -----------------------
-    // Utilities
-    // -----------------------
+    function updatePreviewScale(){
+      const maxW = document.querySelector(".previewStage").clientWidth;
+      const maxH = document.querySelector(".previewStage").clientHeight;
+      const s = Math.min(maxW / 300, maxH / 250);
+      previewScaleEl.style.transform = `scale(${Math.max(1, Math.min(3.2, s))})`;
+    }
+
     function sizeCanvas(){
       const dpr = Math.max(1, window.devicePixelRatio || 1);
       const rect = ad.getBoundingClientRect();
@@ -394,7 +403,6 @@
 
     function wrapLines(str, maxChars){
       const words = String(str).split(/\s+/).filter(Boolean);
-      if (!words.length) return [""];
       const lines = [];
       let line = "";
       for (const w of words){
@@ -430,11 +438,8 @@
           style:"opacity:0.95"
         }));
 
-        // Compact banner label rules
         const label = slices[i];
-        const maxChars = 12;
-        const lines = wrapLines(label, maxChars);
-
+        const lines = wrapLines(label, 12);
         const base = polarToXY(132, mid);
         const tPos = { x: base.x, y: base.y - 10 };
 
@@ -476,9 +481,6 @@
       return Math.max(0, Math.min(n - 1, Math.floor(wheelAngleAtPointer / step)));
     }
 
-    // -----------------------
-    // Confetti (lightweight for banners)
-    // -----------------------
     function clearConfetti(){
       particles = [];
       if (raf) cancelAnimationFrame(raf);
@@ -491,7 +493,6 @@
       const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (prefersReduced) return;
 
-      // Keep it banner-friendly: fewer particles
       const palette = ["#fff3d6","#f6c35a","#e83d5b","#2f7dd8","#18b7a1","#7b4bd7"];
       const count = 120;
 
@@ -582,19 +583,14 @@
       }
     }
 
-    // -----------------------
-    // GSAP timeline
-    // -----------------------
     function spin(){
       if (spinning) return;
       spinning = true;
 
       const n = slices.length;
       const step = 360 / n;
-
       const chosen = Math.floor(Math.random()*n);
 
-      // Keep away from boundaries for a clean land
       const safety = step * 0.18;
       const minA = chosen*step + safety;
       const maxA = (chosen+1)*step - safety;
@@ -610,28 +606,18 @@
 
       resultEl.textContent = "Spinning...";
 
-      // Small UI bump on spin
       gsap.killTweensOf(wheel);
       gsap.killTweensOf(resultEl);
 
-      const tl = gsap.timeline({
-        defaults:{ ease:"power3.out" },
+      gsap.timeline({
         onComplete: () => {
           spinning = false;
-
           const landed = getLandedIndex(currentRotation);
           resultEl.textContent = slices[landed];
-
-          // Confetti after landing
           launchConfetti();
-
-          // Tiny result pop
-          gsap.fromTo(resultEl, { scale: 0.98, opacity:0.88 }, { scale:1, opacity:1, duration:0.25, ease:"power2.out" });
+          gsap.fromTo(resultEl, { scale:0.98, opacity:0.88 }, { scale:1, opacity:1, duration:0.25, ease:"power2.out" });
         }
-      });
-
-      tl.to(wheel, { rotation: targetRotation, duration: 3.2, ease: "power4.out" }, 0);
-      tl.fromTo(".hub", { scale:1 }, { scale:1.03, duration:0.2, yoyo:true, repeat:1 }, 0.1);
+      }).to(wheel, { rotation: targetRotation, duration: 3.2, ease: "power4.out" }, 0);
     }
 
     function reset(){
@@ -643,19 +629,13 @@
       clearConfetti();
     }
 
-    // -----------------------
-    // Click handling (banner pattern)
-    // -----------------------
     function handleClick(e){
       const t = e.target;
       if (t === spinBtn) { spin(); return; }
       if (t === resetBtn) { reset(); return; }
-
-      // Click-through
       window.open(clickTag, "_blank", "noopener,noreferrer");
     }
 
-    // Keyboard access
     function handleKey(e){
       if (e.key === "Enter" || e.key === " "){
         e.preventDefault();
@@ -663,18 +643,22 @@
       }
     }
 
-    // Init
     renderWheel();
+    updatePreviewScale();
     sizeCanvas();
-    window.addEventListener("resize", sizeCanvas);
+
+    window.addEventListener("resize", () => {
+      updatePreviewScale();
+      sizeCanvas();
+    });
 
     ad.addEventListener("click", handleClick);
     ad.addEventListener("keydown", handleKey);
 
-    // Make the buttons feel clickable even though the whole ad is clickable
     spinBtn.style.pointerEvents = "auto";
     resetBtn.style.pointerEvents = "auto";
     spinBtn.addEventListener("click", (e) => { e.stopPropagation(); spin(); });
     resetBtn.addEventListener("click", (e) => { e.stopPropagation(); reset(); });
-
-    // Optional auto-attention animation (
+  </script>
+</body>
+</html>

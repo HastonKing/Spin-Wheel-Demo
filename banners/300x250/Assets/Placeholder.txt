@@ -1,0 +1,1 @@
+This folder contains background image assets for the 300x250 banner variant.

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>300x250 Carnival Wheel Banner</title>
+  <title>300x250 Odds Banner</title>
 
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&display=swap");
@@ -28,14 +28,12 @@
       background:#0f0f12;
       font-family:var(--ui);
     }
-
     .previewStage{
       width: min(92vw, 900px);
       height: min(92vh, 700px);
       display:grid;
       place-items:center;
     }
-
     .previewScale{
       transform-origin: center;
       will-change: transform;
@@ -54,18 +52,15 @@
       user-select:none;
     }
 
-    /* Background photo + blur (with graceful fallback) */
+    /* Background photo + blur (with fallback) */
     .bg{
       position:absolute;
       inset:-18px;
 
-      /* Fallback gradient first */
       background:
         radial-gradient(520px 320px at 50% 30%, rgba(246,195,90,0.12) 0%, rgba(0,0,0,0) 55%),
-        radial-gradient(520px 320px at 50% 70%, rgba(123,75,215,0.10) 0%, rgba(0,0,0,0) 60%),
         linear-gradient(135deg, #1a0f2d 0%, #0f081a 55%, #07040d 100%);
 
-      /* Then image layer on top (if it loads) */
       background-image:
         url("Assets/carnival-background.png"),
         radial-gradient(520px 320px at 50% 30%, rgba(246,195,90,0.12) 0%, rgba(0,0,0,0) 55%);
@@ -93,6 +88,7 @@
       pointer-events:none;
     }
 
+    /* Title centered and fully inside the frame */
     .title{
       position:absolute;
       top:10px;
@@ -101,26 +97,28 @@
       text-align:center;
       font-family:var(--display);
       font-weight:900;
-      letter-spacing:0.6px;
+      letter-spacing: 0.6px;
       color:var(--cream);
       text-shadow: 0 2px 10px var(--shadow);
       font-size:18px;
       line-height:1.05;
+      padding-top:2px;
     }
 
     .subtitle{
-      margin-top:4px;
+      margin-top:5px;
       font-family:var(--ui);
-      font-weight:700;
+      font-weight:800;
       letter-spacing:0.2px;
       opacity:0.92;
       font-size:11px;
+      line-height:1.1;
     }
 
     .wheelWrap{
       position:absolute;
       left: 18px;
-      top: 62px;
+      top: 60px;
       width: 140px;
       height: 140px;
     }
@@ -178,19 +176,20 @@
       z-index:3;
     }
 
+    /* Smaller hub so it doesn’t dominate the wheel */
     .hub{
       position:absolute;
       left:50%;
       top:50%;
       transform:translate(-50%,-50%);
-      width:44px;
-      height:44px;
+      width:38px;
+      height:38px;
       background:var(--cream);
       border:4px solid rgba(246,195,90,0.92);
       color:var(--ink);
       font-family:var(--display);
       font-weight:900;
-      font-size:9px;
+      font-size:8px;
       letter-spacing:0.7px;
       text-transform:uppercase;
       display:grid;
@@ -200,32 +199,42 @@
       z-index:3;
     }
 
+    /* Result panel: truly centered content */
     .panel{
       position:absolute;
       right:12px;
-      top:62px;
+      top:60px;
       width: 120px;
       height: 140px;
       border:1px solid rgba(246,195,90,0.22);
       background: rgba(0,0,0,0.28);
-      padding:10px;
       box-sizing:border-box;
       color: var(--cream);
+
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:10px;
+      text-align:center;
     }
 
     .panelLabel{
       font-weight:900;
       letter-spacing:0.3px;
       font-size:12px;
-      margin:0 0 6px 0;
+      margin:0;
+      width:100%;
     }
 
     .panelResult{
       margin:0;
-      font-size:12px;
-      line-height:1.25;
-      opacity:0.94;
-      min-height:56px;
+      font-size:13px;
+      line-height:1.2;
+      opacity:0.96;
+      font-weight:800;
+      width:100%;
     }
 
     .cta{
@@ -255,9 +264,7 @@
       box-sizing:border-box;
     }
 
-    .btn.secondary{
-      opacity:0.85;
-    }
+    .btn.secondary{ opacity:0.85; }
 
     #confettiCanvas{
       position:absolute;
@@ -282,14 +289,14 @@
 <body>
   <div class="previewStage">
     <div class="previewScale" id="previewScale">
-      <div class="ad" id="ad" tabindex="0" role="button" aria-label="Interactive carnival wheel banner. Click to spin.">
+      <div class="ad" id="ad" tabindex="0" role="button" aria-label="Interactive 300x250 banner. Click to spin.">
         <div class="bg" aria-hidden="true"></div>
         <div class="vignette" aria-hidden="true"></div>
         <div class="frame" aria-hidden="true"></div>
 
         <div class="title">
-          Carnival Wheel
-          <div class="subtitle">Spin it. Every outcome is a yes.</div>
+          Odds That I Get The Job
+          <div class="subtitle">Spin it. Every outcome is in my favor.</div>
         </div>
 
         <div class="wheelWrap">
@@ -323,27 +330,24 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
   <script>
+    // Optional click-through if you want it (banner convention)
     const clickTag = "https://hastonking.github.io/Spin-Wheel-Demo/";
 
+    // Short, legible labels for 300x250
     const slices = [
-      "Yes, easily",
-      "Yes, with style",
-      "Yes, shipped it",
-      "Yes, hire him",
-      "Yes, interview",
-      "Yes, stop overthinking",
-      "Yes, whole point",
-      "Yes, wheel spoke",
-      "Yes, fun",
-      "Yes, absolutely",
-      "Yes, working",
-      "Yes, undeniably"
+      "100:1",
+      "250:1",
+      "500:1",
+      "750:1",
+      "1000:1",
+      "2000:1",
+      "5000:1",
+      "Basically Guaranteed"
     ];
 
     const colors = [
       "#e83d5b","#2f7dd8","#18b7a1","#7b4bd7",
-      "#f6c35a","#ff7a2f","#3ddc97","#7a8cff",
-      "#ef4a8a","#2bb3ff","#21c7b0","#a96bff"
+      "#f6c35a","#ff7a2f","#21c7b0","#a96bff"
     ];
 
     const ad = document.getElementById("ad");
@@ -362,8 +366,9 @@
     let raf = null;
 
     function updatePreviewScale(){
-      const maxW = document.querySelector(".previewStage").clientWidth;
-      const maxH = document.querySelector(".previewStage").clientHeight;
+      const stage = document.querySelector(".previewStage");
+      const maxW = stage.clientWidth;
+      const maxH = stage.clientHeight;
       const s = Math.min(maxW / 300, maxH / 250);
       previewScaleEl.style.transform = `scale(${Math.max(1, Math.min(3.2, s))})`;
     }
@@ -401,21 +406,14 @@
       return el;
     }
 
-    function wrapLines(str, maxChars){
-      const words = String(str).split(/\s+/).filter(Boolean);
-      const lines = [];
-      let line = "";
-      for (const w of words){
-        const t = line ? (line + " " + w) : w;
-        if (t.length <= maxChars){
-          line = t;
-        } else {
-          if (line) lines.push(line);
-          line = w;
-        }
-      }
-      if (line) lines.push(line);
-      return lines.slice(0, 3);
+    function wrapLines(str){
+      // Force “Basically Guaranteed” into 2 lines; keep odds on 1 line
+      const s = String(str);
+      if (s.length <= 8) return [s];
+      const words = s.split(/\s+/).filter(Boolean);
+      if (words.length <= 1) return [s];
+      const mid = Math.ceil(words.length / 2);
+      return [words.slice(0, mid).join(" "), words.slice(mid).join(" ")];
     }
 
     function renderWheel(){
@@ -438,21 +436,23 @@
           style:"opacity:0.95"
         }));
 
-        const label = slices[i];
-        const lines = wrapLines(label, 12);
-        const base = polarToXY(132, mid);
-        const tPos = { x: base.x, y: base.y - 10 };
+        const lines = wrapLines(slices[i]);
+
+        // Push labels outward and make them larger for readability
+        const base = polarToXY(142, mid);
+        const tPos = { x: base.x, y: base.y - 8 };
 
         const text = addSvgEl("text", {
           fill: "#140b1c",
-          style: "font-weight:900;font-size:9px;letter-spacing:0.2px;",
+          style: "font-weight:950;font-size:12px;letter-spacing:0.2px;",
           transform: `rotate(${mid} ${tPos.x.toFixed(3)} ${tPos.y.toFixed(3)})`,
           "text-anchor":"middle",
           "dominant-baseline":"middle"
         });
 
-        const lineH = 8.5;
+        const lineH = 12;
         const centerOffset = (lines.length - 1) / 2;
+
         lines.forEach((ln, idx) => {
           const yLine = tPos.y + (idx - centerOffset) * lineH;
           const tspan = addSvgEl("tspan", { x:String(tPos.x.toFixed(3)), y:String(yLine.toFixed(3)) });
@@ -470,9 +470,7 @@
       }));
     }
 
-    function norm360(deg){
-      return ((deg % 360) + 360) % 360;
-    }
+    function norm360(deg){ return ((deg % 360) + 360) % 360; }
 
     function getLandedIndex(rotationDeg){
       const n = slices.length;
@@ -494,7 +492,7 @@
       if (prefersReduced) return;
 
       const palette = ["#fff3d6","#f6c35a","#e83d5b","#2f7dd8","#18b7a1","#7b4bd7"];
-      const count = 120;
+      const count = 110;
 
       for (let i=0;i<count;i++){
         const side = (i % 2 === 0) ? 0 : 1;
@@ -589,8 +587,10 @@
 
       const n = slices.length;
       const step = 360 / n;
+
       const chosen = Math.floor(Math.random()*n);
 
+      // Avoid “on the line” landings (organic)
       const safety = step * 0.18;
       const minA = chosen*step + safety;
       const maxA = (chosen+1)*step - safety;
@@ -612,8 +612,11 @@
       gsap.timeline({
         onComplete: () => {
           spinning = false;
+
+          // Result always matches the visual landing
           const landed = getLandedIndex(currentRotation);
           resultEl.textContent = slices[landed];
+
           launchConfetti();
           gsap.fromTo(resultEl, { scale:0.98, opacity:0.88 }, { scale:1, opacity:1, duration:0.25, ease:"power2.out" });
         }
@@ -655,6 +658,7 @@
     ad.addEventListener("click", handleClick);
     ad.addEventListener("keydown", handleKey);
 
+    // Make buttons clickable even though ad is clickable
     spinBtn.style.pointerEvents = "auto";
     resetBtn.style.pointerEvents = "auto";
     spinBtn.addEventListener("click", (e) => { e.stopPropagation(); spin(); });

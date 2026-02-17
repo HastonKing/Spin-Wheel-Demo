@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Whimsical Carnival Wheel</title>
 
-  <!-- Old-time / castle-esque display font -->
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;800&display=swap");
   </style>
@@ -30,25 +29,39 @@
       background: #120a1f;
     }
 
+    /* Blurred photo background layer */
     body::before{
       content:"";
       position:fixed;
       inset:-24px;
       pointer-events:none;
+
       background-image: url("Assets/carnival-background.png");
       background-size: cover;
       background-position: center;
-      background-attachment: fixed;
+
+      /* Mobile Safari behaves better with scroll here */
+      background-attachment: scroll;
+
       filter: blur(6px) saturate(1.06) brightness(0.92);
       transform: scale(1.03);
       z-index: 0;
     }
 
+    /* Re-enable fixed attachment on larger screens */
+    @media (min-width: 900px){
+      body::before{
+        background-attachment: fixed;
+      }
+    }
+
+    /* Vignette, warm glow, grain overlay */
     body::after{
       content:"";
       position:fixed;
       inset:0;
       pointer-events:none;
+
       background-image:
         radial-gradient(1200px 700px at 50% 25%, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.70) 65%, rgba(0,0,0,0.90) 100%),
         radial-gradient(900px 520px at 50% 22%, rgba(246,195,90,0.10) 0%, rgba(0,0,0,0) 62%),
@@ -130,6 +143,7 @@
       user-select:none;
     }
 
+    /* Spotlight behind wheel */
     .wheelShell::before{
       content:"";
       position:absolute;
@@ -253,6 +267,7 @@
       font-size: 15px;
       font-family: var(--display);
       text-transform: uppercase;
+      min-width: 140px;
     }
 
     button:hover:not(:disabled){
@@ -285,6 +300,62 @@
       #confettiCanvas{ display:none; }
       .wheel{ transition: transform 0.01s linear !important; }
     }
+
+    /* Mobile optimization */
+    @media (max-width: 520px){
+      .wrap{ padding:14px; }
+      .card{ padding:14px; }
+
+      h1{ font-size:22px; }
+      .sub{ font-size:13.25px; margin-top:10px; line-height:1.55; }
+
+      .stage{
+        grid-template-columns: 1fr;
+        gap:12px;
+        margin-top:14px;
+      }
+
+      .wheelArea{ padding: 8px 6px; }
+
+      /* Reduce the wheel so more fits on screen */
+      .wheelShell{
+        width: min(340px, 86vw);
+      }
+
+      .ring{ border-width: 8px; }
+      .wheel{ inset: 12px; }
+
+      .pointer{
+        top:-8px;
+        border-left-width: 14px;
+        border-right-width: 14px;
+        border-top-width: 26px;
+      }
+
+      .pointerCap{
+        top:16px;
+        width: 12px;
+        height: 12px;
+      }
+
+      .hub{
+        font-size: 11px;
+        border-width: 5px;
+        padding: 8px;
+      }
+
+      .side{ padding: 12px; }
+      .result{ min-height: 52px; font-size: 14px; margin-bottom: 12px; }
+
+      /* Keep buttons on one row, but flexible */
+      .btnRow{ gap:10px; }
+      .btnRow button{
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 12px 14px;
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 
@@ -312,7 +383,6 @@
 
             <div class="wheel" id="wheel">
               <svg id="wheelSvg" viewBox="-200 -200 400 400" width="100%" height="100%" role="img" aria-label="Wheel graphic">
-                <!-- Slices injected by JS -->
               </svg>
             </div>
 
@@ -381,6 +451,10 @@
     let currentRotation = 0;
     let spinning = false;
 
+    function isMobile(){
+      return window.matchMedia && window.matchMedia("(max-width: 520px)").matches;
+    }
+
     function sizeConfettiCanvas(){
       const dpr = Math.max(1, window.devicePixelRatio || 1);
       confettiCanvas.width = Math.floor(window.innerWidth * dpr);
@@ -391,6 +465,7 @@
     }
     window.addEventListener("resize", () => {
       sizeConfettiCanvas();
+      renderWheel();
       if (!confettiRAF && confettiParticles.length) drawConfettiStatic();
     });
     sizeConfettiCanvas();
@@ -458,10 +533,17 @@
 
     function labelStyleFor(text){
       const len = String(text).length;
-      if (len <= 12) return { size: 10.5, maxChars: 12, lineH: 10 };
-      if (len <= 22) return { size: 9.75, maxChars: 14, lineH: 9.25 };
-      if (len <= 32) return { size: 9.25, maxChars: 16, lineH: 9 };
-      return { size: 8.75, maxChars: 18, lineH: 8.5 };
+
+      let style;
+      if (len <= 12) style = { size: 10.5, maxChars: 12, lineH: 10 };
+      else if (len <= 22) style = { size: 9.75, maxChars: 14, lineH: 9.25 };
+      else if (len <= 32) style = { size: 9.25, maxChars: 16, lineH: 9 };
+      else style = { size: 8.75, maxChars: 18, lineH: 8.5 };
+
+      if (isMobile()){
+        style = { ...style, size: style.size - 0.85, lineH: style.lineH - 0.65 };
+      }
+      return style;
     }
 
     function renderWheel(){
@@ -534,7 +616,6 @@
       }
     }
 
-    // --- Ensure result matches the actual landed wedge ---
     function norm360(deg){
       return ((deg % 360) + 360) % 360;
     }
@@ -547,7 +628,7 @@
       return Math.max(0, Math.min(n - 1, idx));
     }
 
-    // -------- Confetti --------
+    // Confetti
     function clearConfetti(){
       confettiParticles = [];
       if (confettiRAF) cancelAnimationFrame(confettiRAF);
@@ -705,7 +786,6 @@
       }
     }
 
-    // -------- Spin logic --------
     function spin(){
       if (spinning) return;
       spinning = true;
